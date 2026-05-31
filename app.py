@@ -455,9 +455,9 @@ def render_sidebar():
         st.markdown("### 🗄️ Database Management")
 
         if st.button("🧹 Clear All Documents", use_container_width=True, type="secondary"):
-            client, _ = get_db()
-            clear_collection(client)
-            st.session_state.collection = get_or_create_collection(client)
+            clear_collection(CHROMA_PERSIST_DIR)
+            st.session_state.chroma_client = None
+            st.session_state.collection = None
             st.session_state.processed_files = {}
             st.session_state.chat_history = []
             st.session_state.total_queries = 0
