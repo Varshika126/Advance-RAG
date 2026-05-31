@@ -260,10 +260,12 @@ def init_session_state():
 
 
 def get_db():
-    """Lazily initialise and cache the vector store."""
+    """Lazily initialise and cache the ChromaDB client and collection."""
     if st.session_state.chroma_client is None:
         st.session_state.chroma_client = get_chroma_client(CHROMA_PERSIST_DIR)
-        st.session_state.collection = get_or_create_collection(CHROMA_PERSIST_DIR)
+        st.session_state.collection = get_or_create_collection(
+            st.session_state.chroma_client
+        )
     return st.session_state.chroma_client, st.session_state.collection
 
 
@@ -453,9 +455,9 @@ def render_sidebar():
         st.markdown("### 🗄️ Database Management")
 
         if st.button("🧹 Clear All Documents", use_container_width=True, type="secondary"):
-            clear_collection(CHROMA_PERSIST_DIR)
-            st.session_state.chroma_client = None
-            st.session_state.collection = None
+            client, _ = get_db()
+            clear_collection(client)
+            st.session_state.collection = get_or_create_collection(client)
             st.session_state.processed_files = {}
             st.session_state.chat_history = []
             st.session_state.total_queries = 0
