@@ -16,8 +16,18 @@ from typing import List, Dict, Any
 import streamlit as st
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env file (local dev)
 load_dotenv()
+
+# On Streamlit Cloud, secrets are in st.secrets — merge them into os.environ
+try:
+    import streamlit as _st_secrets_check
+    for _key in ["OPENAI_API_KEY", "GOOGLE_API_KEY", "LLM_PROVIDER",
+                 "CHROMA_PERSIST_DIR", "UPLOADS_DIR"]:
+        if _key in _st_secrets_check.secrets and not os.getenv(_key):
+            os.environ[_key] = _st_secrets_check.secrets[_key]
+except Exception:
+    pass
 
 # ---------------------------------------------------------------------------
 # Page configuration — must be the first Streamlit call

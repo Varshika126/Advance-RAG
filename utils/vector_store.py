@@ -5,6 +5,12 @@ Manages ChromaDB vector store operations: creation, insertion, deletion, and que
 """
 
 import os
+
+# Disable ChromaDB telemetry before importing chromadb to avoid
+# OpenTelemetry/protobuf conflicts on Python 3.12+
+os.environ["ANONYMIZED_TELEMETRY"] = "False"
+os.environ["CHROMA_TELEMETRY"] = "False"
+
 from typing import List, Dict, Any, Optional
 
 import chromadb
